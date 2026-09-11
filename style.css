@@ -1,0 +1,24 @@
+@font-face {
+  font-family: "nerd-font";
+  src: url("fonts/JetBrainsMonoNerdFont-Regular.ttf");
+}
+
+td{
+    font-family: "nerd-font";
+    font-size:large;
+}
+
+.whiteSquare{
+    border-radius: 2px;
+    border-color: white;
+}
+
+.blackSquare{
+    border-radius: 2px;
+    border-color: black;
+}
+
+td.selected{
+    border-radius: 2px;
+    border-color: red;
+}
