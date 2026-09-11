@@ -14,6 +14,11 @@ function init() {
     for (square of row) {
       board[i][j] = square;
       square.addEventListener("click", () => { click(i, j); });
+      if (i < 2) {
+        square.isWhite = false;
+      } else if (i > 5){
+        square.isWhite = true;
+      }
       j++;
     }
     i++;
@@ -62,41 +67,29 @@ function unselect() {
 function isLegal(movement) {
   switch (board[movement.from.row][movement.from].innerHTML) {
     case '':
-      rookCase(movement);
-      break;
+      return rookCase(movement);
     case '󰡛':
-      rookCase(movement);
-      break;
+      return rookCase(movement);
     case '󰡘':
-      knightCase(movement);
-      break;
+      return knightCase(movement);
     case '':
-      knightCase(movement);
-      break;
+      return knightCase(movement);
     case '󰡜':
-      bishopCase(movement);
-      break;
+      return bishopCase(movement);
     case '':
-      bishopCase(movement);
-      break;
+      return bishopCase(movement);
     case '󰡚':
-      queenCase(movement);
-      break;
+      return queenCase(movement);
     case '':
-      queenCase(movement);
-      break;
+      return queenCase(movement);
     case '󰡗':
-      kingCase(movement);
-      break;
+      return kingCase(movement);
     case '':
-      kingCase(movement);
-      break;
+      return kingCase(movement);
     case '':
-      pawnCase(movement);
-      break;
+      return pawnCase(movement);
     case '󰡙':
-      pawnCase(movement);
-      break;
+      return pawnCase(movement);
   }
 }
 
@@ -129,9 +122,10 @@ function checkEmptyPath(movement, delta) {
 }
 
 function move(movement) {
-  let temp = board[movement.from.row][movement.from.column].innerHTML;
+  board[movement.to.row][movement.to.column].innerHTML = board[movement.from.row][movement.from.column].innerHTML;
+  board[movement.to.row][movement.to.column].isWhite = board[movement.from.row][movement.from.column].isWhite;
+  board[movement.from.row][movement.from.column].isWhite = undefined;
   board[movement.from.row][movement.from.column].innerHTML = '.';
-  board[movement.to.row][movement.to.column].innerHTML = temp;
 }
 
 window.onload = init;
