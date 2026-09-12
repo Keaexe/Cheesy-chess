@@ -3,7 +3,8 @@ function init() {
   turnIndicator = document.getElementById("turnIndicator");
   gameState = {
     toPlay: 0, // 0 = white, 1 = black
-    selected: undefined
+    selected: undefined,
+    castlingAvailability: 16 // bits (1111) whiteleft, whiteright, blackleft, blackright
   }
 
   board = [];
@@ -133,6 +134,31 @@ function bishopCase(movement) {
   delta.row = (movement.from.row > movement.to.row ? -1 : 1);
   delta.column = (movement.from.column > movement.to.column ? -1 : 1);
   return checkEmptyPath(movement, delta)
+}
+
+function queenCase(movement) {
+  return bishopCase(movement) || rookCase(movement);
+}
+
+function kingCase(movement) {
+  // castling
+  let castlingAvailable = (gameState.toPlay === 0 ? 12 /*1100*/ : 3 /*0011*/);
+  if ((gameState.castlingAvailability & castlingAvailable) !== 0) {
+    if ((gameState.toPlay === 0 && movement.to.row === 7) || (gameState.toPlay === 1 && movement.to.row === 0)) {
+      if (movement.to.column === 2) {
+        return checkEmptyPath(movement, { row: 0, column: -1 });
+      }
+      if (movement.to.column === 6) {
+        return checkEmptyPath(movement, { row: 0, column: 1 });
+      }
+    }
+  }
+  // actual movement
+  let delta = {
+    row: movement.to.row - movement.from.row,
+    column: movement.to.column - movement.from.column
+  }
+  return (delta.row >= -1 && delta.row <= 1 && delta.column <= -1 && delta.column >= 1);
 }
 
 function move(movement) {
