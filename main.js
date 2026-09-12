@@ -30,6 +30,10 @@ function init() {
   }
 }
 
+function toggleTheme() {
+  document.body.classList.toggle('dark-theme');
+}
+
 function click(row, column){
   if (gameState.selected === undefined) {
     if (board[row][column].innerHTML === '.') {
