@@ -103,7 +103,7 @@ function isLegal(movement) {
   if (board[movement.from.row][movement.from.column].isWhite === board[movement.to.row][movement.to.column].isWhite) {
     return false;
   }
-  switch (board[movement.from.row][movement.from].innerHTML) {
+  switch (board[movement.from.row][movement.from.column].innerHTML) {
     case '󰡛':
       return rookCase(movement);
     case '󰡘':
