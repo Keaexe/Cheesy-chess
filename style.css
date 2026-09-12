@@ -136,6 +136,7 @@ body {
 td {
   font-family: "nerd-font", monospace;
   font-size: clamp(1.75rem, 4.5vw, 2.75rem);
+  color: #1a1612;
   width: clamp(42px, 8vw, 68px);
   height: clamp(42px, 8vw, 68px);
   text-align: center;
@@ -154,12 +155,10 @@ td {
 /* Light & Dark Squares */
 .whiteSquare {
   background-color: var(--square-light);
-  color: #1a1612;
 }
 
 .blackSquare {
   background-color: var(--square-dark);
-  color: #f7ede2;
 }
 
 /* Cell Hover & States */

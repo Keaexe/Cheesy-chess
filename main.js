@@ -36,7 +36,7 @@ function toggleTheme() {
 
 function click(row, column){
   if (gameState.selected === undefined) {
-    if (board[row][column].innerHTML === '.') {
+    if (board[row][column].innerHTML === '') {
       return;
     }
     gameState.state = 1;
@@ -124,7 +124,7 @@ function checkEmptyPath(movement, delta) {
         movement.from.column + currentDelta.column > 7 || movement.from.column + currentDelta.column < 0) {
       return false;
     }
-    if (board[movement.from.row + currentDelta.row][movement.from.column + currentDelta.column].innerHTML === '.') {
+    if (board[movement.from.row + currentDelta.row][movement.from.column + currentDelta.column].innerHTML === '') {
       return false;
     }
     currentDelta.row += delta.row;
@@ -198,11 +198,11 @@ function pawnCase(movement) {
     if (delta.row === 1 || delta === -1) {
       return true;
     }
-    if (board[movement.to.row][movement.to.column].innerHTML !== '.') {
+    if (board[movement.to.row][movement.to.column].innerHTML !== '') {
       return false
     }
     // movement is legal, now looking for en passant
-    if (board[movement.to.row][movement.to.column + 1] !== '.' || board[movement.to.row][movement.to.column - 1] !== '.') {
+    if (board[movement.to.row][movement.to.column + 1] !== '' || board[movement.to.row][movement.to.column - 1] !== '') {
       gameState.enPassant = movement.to;
     }
     return true
@@ -212,7 +212,7 @@ function pawnCase(movement) {
     return false;
   }
   if (delta.column === 0) {
-    if (board[movement.to.row][movement.to.column].innerHTML !== '.') {
+    if (board[movement.to.row][movement.to.column].innerHTML !== '') {
       return false;
     }
     // movement is legal, now looking for promotion
@@ -225,7 +225,7 @@ function pawnCase(movement) {
     return false;
   }
   // en passant
-  if (board[movement.to.row][movement.to.column].innerHTML !== '.') {
+  if (board[movement.to.row][movement.to.column].innerHTML !== '') {
     if (movement.to.column === gameState.enPassant.column &&
         movement.to.row - gameState.enPassant.row === (gameState.toPlay === 0 ? -1 : 1)) {
       gameState.usedEnPassant = true;
@@ -259,12 +259,12 @@ function move(movement) {
   board[movement.to.row][movement.to.column].innerHTML = board[movement.from.row][movement.from.column].innerHTML;
   board[movement.to.row][movement.to.column].isWhite = board[movement.from.row][movement.from.column].isWhite;
   board[movement.from.row][movement.from.column].isWhite = undefined;
-  board[movement.from.row][movement.from.column].innerHTML = '.';
+  board[movement.from.row][movement.from.column].innerHTML = '';
   if (gameState.promotion !== undefined) {
     promotion();
   }
   if (gameState.usedEnPassant) {
-    board[gameState.enPassant.row][gameState.enPassant.column] = '.';
+    board[gameState.enPassant.row][gameState.enPassant.column] = '';
     board[gameState.enPassant.row][gameState.enPassant.column].isWhite = undefined;
   }
   if (gameState.usedCastling) {
