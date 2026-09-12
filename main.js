@@ -1,5 +1,4 @@
 function init() {
-  let boardElement = document.getElementById("board");
   turnIndicator = document.getElementById("turnIndicator");
   gameState = {
     toPlay: 0, // 0 = white, 1 = black
@@ -11,30 +10,36 @@ function init() {
     promotion: undefined
   }
 
+  let boardElement = document.getElementById("board");
   board = [];
-  let i = 0;
-  let j = 0;
-  for (row of boardElement) {
+  for (let i = 0; i < 8; i++) {
+    let tr = document.createElement("tr");
+    boardElement.appendChild(tr);
     board[i] = [];
-    for (square of row) {
-      board[i][j] = square;
-      square.addEventListener("click", () => { click(i, j); });
-      if (i < 2) {
-        square.isWhite = false;
-      } else if (i > 5){
-        square.isWhite = true;
+    for (let j = 0; j < 8; j++) {
+      let td = document.createElement("td")
+      board[i][j] = tr.appendChild(td)
+      board[i][j].addEventListener("click", () => { select(i, j); });
+      if ((i % 2 === 0 && j % 2 === 0) || (i % 2 !== 0 && j % 2 !== 0)) {
+        board[i][j].classList.add("whiteSquare");
+      } else {
+        board[i][j].classList.add("blackSquare");
       }
-      j++;
+
+      if (i < 2) {
+        board[i][j].isWhite = false;
+      } else if (i > 5){
+        board[i][j].isWhite = true;
+      }
     }
-    i++;
   }
 }
 
 function toggleTheme() {
-  document.body.classList.toggle('dark-theme');
+  document.body.classList.toggle("dark-theme");
 }
 
-function click(row, column){
+function select(row, column){
   if (gameState.selected === undefined) {
     if (board[row][column].innerHTML === '') {
       return;
