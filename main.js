@@ -156,6 +156,20 @@ function kingCase(movement) {
   return (delta.row >= -1 && delta.row <= 1 && delta.column <= -1 && delta.column >= 1);
 }
 
+function knightCase(movement) {
+  let absDelta = {
+    row: Math.abs(movement.to.row - movement.from.row),
+    column: Math.abs(movement.to.column - movement.from.column)
+  }
+  if (absDelta.row === 3) {
+    return absDelta.column === 1;
+  }
+  if (absDelta.column === 3) {
+    return absDelta.row === 1;
+  }
+  return false;
+}
+
 function move(movement) {
   board[movement.to.row][movement.to.column].innerHTML = board[movement.from.row][movement.from.column].innerHTML;
   board[movement.to.row][movement.to.column].isWhite = board[movement.from.row][movement.from.column].isWhite;
