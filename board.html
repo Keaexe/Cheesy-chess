@@ -9,12 +9,12 @@
   </head>
   <body>
       <button id="theme-toggle" onclick="toggleTheme()">🌙 / ☀️</button>
-    <div class="game-container">
+    <div id="game-container">
       <h1 id="title">Cheesey chess 🧀</h1>
 
       <h1 id="turnIndicator">White's turn ⬜</h1>
 
-      <div class="board-wrapper">
+      <div id="board-wrapper">
           <table id="board">
               <tr> <td class="whiteSquare">󰡛</td> <td class="blackSquare">󰡘</td> <td class="whiteSquare">󰡜</td> <td class="blackSquare">󰡚</td> <td class="whiteSquare">󰡗</td> <td class="blackSquare">󰡜</td> <td class="whiteSquare">󰡘</td> <td class="blackSquare">󰡛</td> </tr>
               <tr> <td class="blackSquare">󰡙</td> <td class="whiteSquare">󰡙</td> <td class="blackSquare">󰡙</td> <td class="whiteSquare">󰡙</td> <td class="blackSquare">󰡙</td> <td class="whiteSquare">󰡙</td> <td class="blackSquare">󰡙</td> <td class="whiteSquare">󰡙</td> </tr>
@@ -27,7 +27,7 @@
           </table>
       </div>
 
-      <div class="controls">
+      <div id="controls">
           <button id="surrender" onclick="surrender()">Surrender</button>
           <button id="draw" onclick="proposeDraw()">Draw</button>
       </div>

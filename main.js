@@ -4,7 +4,9 @@ function init() {
   gameState = {
     toPlay: 0, // 0 = white, 1 = black
     selected: undefined,
-    castlingAvailability: 16 // bits (1111) whiteleft, whiteright, blackleft, blackright
+    castlingAvailability: 16, // bits (1111) whiteleft, whiteright, blackleft, blackright
+    enPassant: undefined,
+    promotion: undefined
   }
 
   board = [];
@@ -170,11 +172,87 @@ function knightCase(movement) {
   return false;
 }
 
+function pawnCase(movement) {
+  let delta = {
+    row: movement.to.row - movement.from.row,
+    column: movement.to.column - movement.from.column
+  }
+  // first move
+  if (gameState.toPlay === 0 && movement.from.row === 6) {
+    if (delta.column !== 0) {
+      return false;
+    }
+    // if next square isn't free
+    if (board[movement.from.row + (gameState.toPlay === 0 ? -1 : 1)][movement.from.column].innerHTML !== ".") {
+      return false;
+    }
+    if (delta.row === 1 || delta === -1) {
+      return true;
+    }
+    if (board[movement.to.row][movement.to.column].innerHTML !== '.') {
+      return false
+    }
+    // movement is legal, now looking for en passant
+    if (board[movement.to.row][movement.to.column + 1] !== '.' || board[movement.to.row][movement.to.column - 1] !== '.') {
+      gameState.enPassant = movement.to;
+    }
+    return true
+  }
+  // next moves
+  if (delta.row > 1 || delta.row < -1) {
+    return false;
+  }
+  if (delta.column === 0) {
+    if (board[movement.to.row][movement.to.column].innerHTML !== '.') {
+      return false;
+    }
+    // movement is legal, now looking for promotion
+    if (movement.to.row === 7 || movement.to.row === 0) {
+      gameState.promotion = movement.to;
+    }
+    return true;
+  }
+  if (delta.column > 1 || delta.column < -1) {
+    return false;
+  }
+  // en passant
+  if (board[movement.to.row][movement.to.column].innerHTML !== '.') {
+    if (movement.to.column === gameState.enPassant.column &&
+        movement.to.row - gameState.enPassant.row === (gameState.toPlay === 0 ? -1 : 1)) {
+      board[gameState.enPassant.row][gameState.enPassant.column] = '.';
+      return true;
+    }
+  }
+  return true;
+}
+
+function promotion() {
+  let answer = undefined;
+  do {
+    answer = prompt("Enter the piece you wanna promote to\n(Q/󰡚, B/󰡜, K/󰡘, R/󰡛)");
+    if (answer === 'Q' || answer === 'q' || answer === '󰡚') {
+      board[gameState.promotion.row][gameState.promotion.column] = (gameState.toPlay === 0 ? '' : '󰡚');
+    } else if (answer === 'B' || answer === 'b' || answer === '󰡜') {
+      board[gameState.promotion.row][gameState.promotion.column] = (gameState.toPlay === 0 ? '' : '󰡜');
+    } else if (answer === 'K' || answer === 'k' || answer === '󰡘') {
+      board[gameState.promotion.row][gameState.promotion.column] = (gameState.toPlay === 0 ? '' : '󰡘');
+    } else if (answer === 'R' || answer === 'r' || answer === '󰡛') {
+      board[gameState.promotion.row][gameState.promotion.column] = (gameState.toPlay === 0 ? '' : '󰡛');
+    } else {
+      answer = undefined;
+    }
+  } while (answer === undefined);
+  gameState.promotion = undefined;
+}
+
 function move(movement) {
   board[movement.to.row][movement.to.column].innerHTML = board[movement.from.row][movement.from.column].innerHTML;
   board[movement.to.row][movement.to.column].isWhite = board[movement.from.row][movement.from.column].isWhite;
   board[movement.from.row][movement.from.column].isWhite = undefined;
   board[movement.from.row][movement.from.column].innerHTML = '.';
+  if (gameState.promotion !== undefined) {
+    promotion();
+  }
 }
 
 window.onload = init;
