@@ -1,5 +1,6 @@
 function init() {
   turnIndicator = document.getElementById("turnIndicator");
+  board = [];
   gameState = {
     toPlay: 0, // 0 = white, 1 = black
     selected: undefined,
@@ -9,9 +10,11 @@ function init() {
     usedCastling: false,
     promotion: undefined
   }
+  createBoard();
+}
 
+function createBoard() {
   let boardElement = document.getElementById("board");
-  board = [];
   for (let i = 0; i < 8; i++) {
     let tr = document.createElement("tr");
     boardElement.appendChild(tr);
@@ -26,8 +29,25 @@ function init() {
         board[i][j].classList.add("blackSquare");
       }
 
+      if (i === 1 || i === 6) {
+        board[i][j].innerHTML = '󰡙';
+      } else if (i === 0 || i === 7) {
+        if (j === 0 || j === 7) {
+          board[i][j].innerHTML = '󰡛';
+        } else if (j === 1 || j === 6) {
+          board[i][j].innerHTML = '󰡘';
+        } else if (j === 2 || j === 5) {
+          board[i][j].innerHTML = '󰡜';
+        } else if (j === 3) {
+          board[i][j].innerHTML = '󰡚';
+        } else if (j === 4) {
+          board[i][j].innerHTML = '󰡗';
+        }
+      }
+
       if (i < 2) {
         board[i][j].isWhite = false;
+        board[i][j].classList.add("whitePiece");
       } else if (i > 5){
         board[i][j].isWhite = true;
       }
@@ -84,28 +104,16 @@ function isLegal(movement) {
     return false;
   }
   switch (board[movement.from.row][movement.from].innerHTML) {
-    case '':
-      return rookCase(movement);
     case '󰡛':
       return rookCase(movement);
     case '󰡘':
       return knightCase(movement);
-    case '':
-      return knightCase(movement);
     case '󰡜':
-      return bishopCase(movement);
-    case '':
       return bishopCase(movement);
     case '󰡚':
       return queenCase(movement);
-    case '':
-      return queenCase(movement);
     case '󰡗':
       return kingCase(movement);
-    case '':
-      return kingCase(movement);
-    case '':
-      return pawnCase(movement);
     case '󰡙':
       return pawnCase(movement);
   }
@@ -246,13 +254,13 @@ function promotion() {
   do {
     answer = prompt("Enter the piece you wanna promote to\n(Q/󰡚, B/󰡜, K/󰡘, R/󰡛)");
     if (answer === 'Q' || answer === 'q' || answer === '󰡚') {
-      board[gameState.promotion.row][gameState.promotion.column] = (gameState.toPlay === 0 ? '' : '󰡚');
+      board[gameState.promotion.row][gameState.promotion.column] = '󰡚';
     } else if (answer === 'B' || answer === 'b' || answer === '󰡜') {
-      board[gameState.promotion.row][gameState.promotion.column] = (gameState.toPlay === 0 ? '' : '󰡜');
+      board[gameState.promotion.row][gameState.promotion.column] = '󰡜';
     } else if (answer === 'K' || answer === 'k' || answer === '󰡘') {
-      board[gameState.promotion.row][gameState.promotion.column] = (gameState.toPlay === 0 ? '' : '󰡘');
+      board[gameState.promotion.row][gameState.promotion.column] = '󰡘';
     } else if (answer === 'R' || answer === 'r' || answer === '󰡛') {
-      board[gameState.promotion.row][gameState.promotion.column] = (gameState.toPlay === 0 ? '' : '󰡛');
+      board[gameState.promotion.row][gameState.promotion.column] = '󰡛';
     } else {
       answer = undefined;
     }
@@ -262,17 +270,19 @@ function promotion() {
 
 function move(movement) {
   board[movement.to.row][movement.to.column].innerHTML = board[movement.from.row][movement.from.column].innerHTML;
+  if (board[movement.from.row][movement.from.column].isWhite) {
+    board[movement.from.row][movement.from.column].classList.remove("whitePiece");
+    board[movement.to.row][movement.to.column].classList.add("whitePiece");
+  }
   board[movement.to.row][movement.to.column].isWhite = board[movement.from.row][movement.from.column].isWhite;
   board[movement.from.row][movement.from.column].isWhite = undefined;
   board[movement.from.row][movement.from.column].innerHTML = '';
   if (gameState.promotion !== undefined) {
     promotion();
-  }
-  if (gameState.usedEnPassant) {
+  } else if (gameState.usedEnPassant) {
     board[gameState.enPassant.row][gameState.enPassant.column] = '';
     board[gameState.enPassant.row][gameState.enPassant.column].isWhite = undefined;
-  }
-  if (gameState.usedCastling) {
+  } else if (gameState.usedCastling) {
     gameState.usedCastling = false;
     if (movement.to.column === 2) {
       move({

@@ -146,6 +146,10 @@ td {
   line-height: 1;
 }
 
+td.whitePiece {
+    color: #c9c9c9;
+}
+
 /* Hide empty dot markers gracefully */
 td:empty,
 td {
