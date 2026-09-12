@@ -6,6 +6,7 @@ function init() {
     selected: undefined,
     castlingAvailability: 16, // bits (1111) whiteleft, whiteright, blackleft, blackright
     enPassant: undefined,
+    usedEnPassant: false,
     promotion: undefined
   }
 
@@ -68,6 +69,7 @@ function unselect() {
 }
 
 function isLegal(movement) {
+  gameState.usedEnPassant = false;
   if (board[movement.from.row][movement.from.column].isWhite === board[movement.to.row][movement.to.column].isWhite) {
     return false;
   }
@@ -219,9 +221,10 @@ function pawnCase(movement) {
   if (board[movement.to.row][movement.to.column].innerHTML !== '.') {
     if (movement.to.column === gameState.enPassant.column &&
         movement.to.row - gameState.enPassant.row === (gameState.toPlay === 0 ? -1 : 1)) {
-      board[gameState.enPassant.row][gameState.enPassant.column] = '.';
+      gameState.usedEnPassant = true;
       return true;
     }
+    return false;
   }
   return true;
 }
@@ -252,6 +255,10 @@ function move(movement) {
   board[movement.from.row][movement.from.column].innerHTML = '.';
   if (gameState.promotion !== undefined) {
     promotion();
+  }
+  if (gameState.usedEnPassant) {
+    board[gameState.enPassant.row][gameState.enPassant.column] = '.';
+    board[gameState.enPassant.row][gameState.enPassant.column].isWhite = undefined;
   }
 }
 
