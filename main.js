@@ -100,6 +100,8 @@ function unselect() {
 
 function isLegal(movement) {
   gameState.usedEnPassant = false;
+  gameState.usedCastling = false;
+  gameState.promotion = undefined;
   if (board[movement.from.row][movement.from.column].isWhite === board[movement.to.row][movement.to.column].isWhite) {
     return false;
   }
