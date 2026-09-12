@@ -7,6 +7,7 @@ function init() {
     castlingAvailability: 16, // bits (1111) whiteleft, whiteright, blackleft, blackright
     enPassant: undefined,
     usedEnPassant: false,
+    usedCastling: false,
     promotion: undefined
   }
 
@@ -145,9 +146,11 @@ function kingCase(movement) {
   if ((gameState.castlingAvailability & castlingAvailable) !== 0) {
     if ((gameState.toPlay === 0 && movement.to.row === 7) || (gameState.toPlay === 1 && movement.to.row === 0)) {
       if (movement.to.column === 2) {
+        gameState.usedCastling = true;
         return checkEmptyPath(movement, { row: 0, column: -1 });
       }
       if (movement.to.column === 6) {
+        gameState.usedCastling = true;
         return checkEmptyPath(movement, { row: 0, column: 1 });
       }
     }
@@ -259,6 +262,20 @@ function move(movement) {
   if (gameState.usedEnPassant) {
     board[gameState.enPassant.row][gameState.enPassant.column] = '.';
     board[gameState.enPassant.row][gameState.enPassant.column].isWhite = undefined;
+  }
+  if (gameState.usedCastling) {
+    gameState.usedCastling = false;
+    if (movement.to.column === 2) {
+      move({
+        from: { row: movement.from.row, column: 0 },
+        to: { row: movement.from.row, column: 3 }
+      })
+    } else {
+      move({
+        from: { row: movement.from.row, column: 7 },
+        to: { row: movement.from.row, column: 5 }
+      })
+    }
   }
 }
 
