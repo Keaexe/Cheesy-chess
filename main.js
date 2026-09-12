@@ -65,6 +65,9 @@ function unselect() {
 }
 
 function isLegal(movement) {
+  if (board[movement.from.row][movement.from.column].isWhite === board[movement.to.row][movement.to.column].isWhite) {
+    return false;
+  }
   switch (board[movement.from.row][movement.from].innerHTML) {
     case '':
       return rookCase(movement);
@@ -112,6 +115,10 @@ function rookCase(movement) {
 function checkEmptyPath(movement, delta) {
   let currentDelta = delta;
   while (movement.from.row + currentDelta.row !== movement.to.row && movement.from.column + currentDelta.column !== movement.to.column) {
+    if (movement.from.row + currentDelta.row > 7 || movement.from.row + currentDelta.row < 0 ||
+        movement.from.column + currentDelta.column > 7 || movement.from.column + currentDelta.column < 0) {
+      return false;
+    }
     if (board[movement.from.row + currentDelta.row][movement.from.column + currentDelta.column].innerHTML === '.') {
       return false;
     }
@@ -119,6 +126,13 @@ function checkEmptyPath(movement, delta) {
     currentDelta.column += delta.column;
   }
   return true;
+}
+
+function bishopCase(movement) {
+  let delta;
+  delta.row = (movement.from.row > movement.to.row ? -1 : 1);
+  delta.column = (movement.from.column > movement.to.column ? -1 : 1);
+  return checkEmptyPath(movement, delta)
 }
 
 function move(movement) {
