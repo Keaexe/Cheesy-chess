@@ -85,6 +85,8 @@ function select(row, column){
     unselect();
     return;
   }
+  board[gameState.selected.row][gameState.selected.column].classList.remove("selected");
+  gameState.selected = undefined;
   move(movement);
 }
 
