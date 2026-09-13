@@ -126,23 +126,23 @@ function isLegal(movement) {
 
 function rookCase(movement) {
   if (movement.from.row === movement.to.row) {
-    return checkEmptyPath(movement, {row: 0, column: (movement.from.column > movement.to.column ? 1 : -1)})
+    return checkEmptyPath(movement, {row: 0, column: (movement.from.column > movement.to.column ? -1 : 1)})
   }
   if (movement.from.column === movement.to.column) {
-    return checkEmptyPath(movement, {row: (movement.from.row > movement.to.row ? 1 : -1), column: 0})
+    return checkEmptyPath(movement, {row: (movement.from.row > movement.to.row ? -1 : 1), column: 0})
   }
   return false;
 }
 
 // checks if a movement can be accomplished with the given delta and if no pieces are in the way
 function checkEmptyPath(movement, delta) {
-  let currentDelta = delta;
-  while (movement.from.row + currentDelta.row !== movement.to.row && movement.from.column + currentDelta.column !== movement.to.column) {
+  let currentDelta = { ...delta };
+  while (movement.from.row + currentDelta.row !== movement.to.row || movement.from.column + currentDelta.column !== movement.to.column) {
     if (movement.from.row + currentDelta.row > 7 || movement.from.row + currentDelta.row < 0 ||
         movement.from.column + currentDelta.column > 7 || movement.from.column + currentDelta.column < 0) {
       return false;
     }
-    if (board[movement.from.row + currentDelta.row][movement.from.column + currentDelta.column].innerHTML === '') {
+    if (board[movement.from.row + currentDelta.row][movement.from.column + currentDelta.column].innerHTML !== '') {
       return false;
     }
     currentDelta.row += delta.row;
@@ -152,10 +152,11 @@ function checkEmptyPath(movement, delta) {
 }
 
 function bishopCase(movement) {
-  let delta;
-  delta.row = (movement.from.row > movement.to.row ? -1 : 1);
-  delta.column = (movement.from.column > movement.to.column ? -1 : 1);
-  return checkEmptyPath(movement, delta)
+  let delta = {
+    row: (movement.from.row > movement.to.row ? -1 : 1),
+    column: (movement.from.column > movement.to.column ? -1 : 1)
+  };
+  return checkEmptyPath(movement, delta);
 }
 
 function queenCase(movement) {
