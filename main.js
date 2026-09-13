@@ -265,13 +265,13 @@ function promotion() {
   do {
     answer = prompt("Enter the piece you wanna promote to\n(Q/󰡚, B/󰡜, K/󰡘, R/󰡛)");
     if (answer === 'Q' || answer === 'q' || answer === '󰡚') {
-      board[gameState.promotion.row][gameState.promotion.column] = '󰡚';
+      board[gameState.promotion.row][gameState.promotion.column].innerHTML = '󰡚';
     } else if (answer === 'B' || answer === 'b' || answer === '󰡜') {
-      board[gameState.promotion.row][gameState.promotion.column] = '󰡜';
+      board[gameState.promotion.row][gameState.promotion.column].innerHTML = '󰡜';
     } else if (answer === 'K' || answer === 'k' || answer === '󰡘') {
-      board[gameState.promotion.row][gameState.promotion.column] = '󰡘';
+      board[gameState.promotion.row][gameState.promotion.column].innerHTML = '󰡘';
     } else if (answer === 'R' || answer === 'r' || answer === '󰡛') {
-      board[gameState.promotion.row][gameState.promotion.column] = '󰡛';
+      board[gameState.promotion.row][gameState.promotion.column].innerHTML = '󰡛';
     } else {
       answer = undefined;
     }
@@ -289,6 +289,7 @@ function move(movement) {
   board[movement.to.row][movement.to.column].isWhite = board[movement.from.row][movement.from.column].isWhite;
   clearSquare(movement.from);
 
+  // special cases
   if (gameState.promotion !== undefined) {
     promotion();
   } else if (gameState.usedEnPassant) {
@@ -299,12 +300,12 @@ function move(movement) {
       move({
         from: { row: movement.from.row, column: 0 },
         to: { row: movement.from.row, column: 3 }
-      })
+      });
     } else {
       move({
         from: { row: movement.from.row, column: 7 },
         to: { row: movement.from.row, column: 5 }
-      })
+      });
     }
   }
 }
