@@ -85,14 +85,15 @@ function select(row, column){
     unselect();
     return;
   }
+  move(movement);
   board[gameState.selected.row][gameState.selected.column].classList.remove("selected");
   gameState.selected = undefined;
-  move(movement);
+  changeTurn();
 }
 
 function changeTurn() {
-  turnIndicator.innerHTML = gameState.toPlay === 0 ? "White's turn ⬜" : "Black's turn ⬛";
   gameState.toPlay = gameState.toPlay * -1 + 1;
+  turnIndicator.innerHTML = gameState.toPlay === 0 ? "White's turn ⬜" : "Black's turn ⬛";
 }
 
 function unselect() {
