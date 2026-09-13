@@ -221,11 +221,11 @@ function pawnCase(movement) {
     if (board[movement.from.row + (gameState.toPlay === 0 ? -1 : 1)][movement.from.column].innerHTML !== '') {
       return false;
     }
-    if (delta.row === 1 || delta === -1) {
+    if (delta.row === (gameState.toPlay === 0 ? -1 : 1)) {
       return true;
     }
-    if (board[movement.to.row][movement.to.column].innerHTML !== '') {
-      return false
+    if (delta.row !== (gameState.toPlay === 0 ? -2 : 2)) {
+      return false;
     }
     // movement is legal, now looking for en passant
     if (movement.to.column > 0 && board[movement.to.row][movement.to.column - 1].innerHTML !== '') {
