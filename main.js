@@ -47,9 +47,9 @@ function createBoard() {
 
       if (i < 2) {
         board[i][j].isWhite = false;
-        board[i][j].classList.add("whitePiece");
       } else if (i > 5){
         board[i][j].isWhite = true;
+        board[i][j].classList.add("whitePiece");
       }
     }
   }
@@ -64,7 +64,10 @@ function select(row, column){
     if (board[row][column].innerHTML === '') {
       return;
     }
-    gameState.state = 1;
+    if ((board[row][column].isWhite && gameState.toPlay === 1) || ((!board[row][column].isWhite) && gameState.toPlay === 0)) {
+      alert("It's " + (gameState.toPlay === 0 ? "white" : "black") + "'s turn");
+      return;
+    }
     board[row][column].classList.add("selected");
     gameState.selected = { row: row, column: column };
     return;
@@ -82,10 +85,7 @@ function select(row, column){
     unselect();
     return;
   }
-  if (move(movement)) {
-    return;
-  }
-  alert("Movement failed !!!");
+  move(movement);
 }
 
 function changeTurn() {
@@ -202,12 +202,12 @@ function pawnCase(movement) {
     column: movement.to.column - movement.from.column
   }
   // first move
-  if (gameState.toPlay === 0 && movement.from.row === 6) {
+  if (gameState.toPlay === 0 && movement.from.row === 6 || gameState.toPlay === 1 && movement.from.row === 1) {
     if (delta.column !== 0) {
       return false;
     }
     // if next square isn't free
-    if (board[movement.from.row + (gameState.toPlay === 0 ? -1 : 1)][movement.from.column].innerHTML !== ".") {
+    if (board[movement.from.row + (gameState.toPlay === 0 ? -1 : 1)][movement.from.column].innerHTML !== '') {
       return false;
     }
     if (delta.row === 1 || delta === -1) {
@@ -217,7 +217,9 @@ function pawnCase(movement) {
       return false
     }
     // movement is legal, now looking for en passant
-    if (board[movement.to.row][movement.to.column + 1] !== '' || board[movement.to.row][movement.to.column - 1] !== '') {
+    if (movement.to.column > 0 && board[movement.to.row][movement.to.column - 1].innerHTML !== '') {
+      gameState.enPassant = movement.to;
+    } else if (movement.to.column < 7 && board[movement.to.row][movement.to.column + 1].innerHTML !== '') {
       gameState.enPassant = movement.to;
     }
     return true
