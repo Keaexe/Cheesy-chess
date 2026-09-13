@@ -208,7 +208,7 @@ function pawnCase(movement) {
   if (
     (gameState.toPlay === 0 && movement.from.row === 6 || gameState.toPlay === 1 && movement.from.row === 1)
     &&
-    delta.column !== 0
+    delta.column === 0
   ) {
     // if next square isn't free
     if (board[movement.from.row + (gameState.toPlay === 0 ? -1 : 1)][movement.from.column].innerHTML !== '') {
@@ -229,7 +229,7 @@ function pawnCase(movement) {
     return true
   }
   // normal moves
-  if (delta.row !== 1 || delta.row !== -1) {
+  if (delta.row !== 1 && delta.row !== -1) {
     return false;
   }
   if (delta.column > 1 || delta.column < -1) {
@@ -241,23 +241,21 @@ function pawnCase(movement) {
     }
   } else {
     if (board[movement.to.row][movement.to.column].innerHTML === '') {
+      if (
+        gameState.enPassant !== undefined &&
+        movement.to.column === gameState.enPassant.column &&
+        movement.to.row - gameState.enPassant.row === (gameState.toPlay === 0 ? -1 : 1)
+      ) {
+        // en passant
+        gameState.usedEnPassant = true;
+        return true;
+      }
       return false;
     }
   }
   // movement is legal, now looking for promotion
   if (movement.to.row === 7 || movement.to.row === 0) {
     gameState.promotion = movement.to;
-  }
-  return true;
-
-  // en passant
-  if (board[movement.to.row][movement.to.column].innerHTML !== '') {
-    if (movement.to.column === gameState.enPassant.column &&
-        movement.to.row - gameState.enPassant.row === (gameState.toPlay === 0 ? -1 : 1)) {
-      gameState.usedEnPassant = true;
-      return true;
-    }
-    return false;
   }
   return true;
 }
@@ -293,7 +291,7 @@ function move(movement) {
   if (gameState.promotion !== undefined) {
     promotion();
   } else if (gameState.usedEnPassant) {
-    board[gameState.enPassant.row][gameState.enPassant.column] = '';
+    board[gameState.enPassant.row][gameState.enPassant.column].innerHTML = '';
     board[gameState.enPassant.row][gameState.enPassant.column].isWhite = undefined;
   } else if (gameState.usedCastling) {
     gameState.usedCastling = false;
