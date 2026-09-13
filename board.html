@@ -5,29 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cheesey chess 🧀</title>
     <link rel="stylesheet" href="style.css">
-    <style src="style.css"></style>
+    <script src="main.js"></script>
   </head>
   <body>
       <button id="theme-toggle" onclick="toggleTheme()">🌙 / ☀️</button>
-    <div class="game-container">
+    <div id="game-container">
       <h1 id="title">Cheesey chess 🧀</h1>
 
       <h1 id="turnIndicator">White's turn ⬜</h1>
 
-      <div class="board-wrapper">
-          <table id="board">
-              <tr> <td class="whiteSquare">󰡛</td> <td class="blackSquare">󰡘</td> <td class="whiteSquare">󰡜</td> <td class="blackSquare">󰡚</td> <td class="whiteSquare">󰡗</td> <td class="blackSquare">󰡜</td> <td class="whiteSquare">󰡘</td> <td class="blackSquare">󰡛</td> </tr>
-              <tr> <td class="blackSquare">󰡙</td> <td class="whiteSquare">󰡙</td> <td class="blackSquare">󰡙</td> <td class="whiteSquare">󰡙</td> <td class="blackSquare">󰡙</td> <td class="whiteSquare">󰡙</td> <td class="blackSquare">󰡙</td> <td class="whiteSquare">󰡙</td> </tr>
-              <tr> <td class="whiteSquare">.</td> <td class="blackSquare">.</td> <td class="whiteSquare">.</td> <td class="blackSquare">.</td> <td class="whiteSquare">.</td> <td class="blackSquare">.</td> <td class="whiteSquare">.</td> <td class="blackSquare">.</td> </tr>
-              <tr> <td class="blackSquare">.</td> <td class="whiteSquare">.</td> <td class="blackSquare">.</td> <td class="whiteSquare">.</td> <td class="blackSquare">.</td> <td class="whiteSquare">.</td> <td class="blackSquare">.</td> <td class="whiteSquare">.</td> </tr>
-              <tr> <td class="whiteSquare">.</td> <td class="blackSquare">.</td> <td class="whiteSquare">.</td> <td class="blackSquare">.</td> <td class="whiteSquare">.</td> <td class="blackSquare">.</td> <td class="whiteSquare">.</td> <td class="blackSquare">.</td> </tr>
-              <tr> <td class="blackSquare">.</td> <td class="whiteSquare">.</td> <td class="blackSquare">.</td> <td class="whiteSquare">.</td> <td class="blackSquare">.</td> <td class="whiteSquare">.</td> <td class="blackSquare">.</td> <td class="whiteSquare">.</td> </tr>
-              <tr> <td class="whiteSquare"></td> <td class="blackSquare"></td> <td class="whiteSquare"></td> <td class="blackSquare"></td> <td class="whiteSquare"></td> <td class="blackSquare"></td> <td class="whiteSquare"></td> <td class="blackSquare"></td> </tr>
-              <tr> <td class="blackSquare"></td> <td class="whiteSquare"></td> <td class="blackSquare"></td> <td class="whiteSquare"></td> <td class="blackSquare"></td> <td class="whiteSquare"></td> <td class="blackSquare"></td> <td class="whiteSquare"></td> </tr>
-          </table>
+      <div id="board-wrapper">
+          <table id="board"></table>
       </div>
 
-      <div class="controls">
+      <div id="controls">
           <button id="surrender" onclick="surrender()">Surrender</button>
           <button id="draw" onclick="proposeDraw()">Draw</button>
       </div>
