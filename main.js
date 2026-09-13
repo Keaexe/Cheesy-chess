@@ -282,17 +282,17 @@ function promotion() {
 function move(movement) {
   board[movement.to.row][movement.to.column].innerHTML = board[movement.from.row][movement.from.column].innerHTML;
   if (board[movement.from.row][movement.from.column].isWhite) {
-    board[movement.from.row][movement.from.column].classList.remove("whitePiece");
     board[movement.to.row][movement.to.column].classList.add("whitePiece");
+  } else {
+    board[movement.to.row][movement.to.column].classList.remove("whitePiece");
   }
   board[movement.to.row][movement.to.column].isWhite = board[movement.from.row][movement.from.column].isWhite;
-  board[movement.from.row][movement.from.column].isWhite = undefined;
-  board[movement.from.row][movement.from.column].innerHTML = '';
+  clearSquare(movement.from);
+
   if (gameState.promotion !== undefined) {
     promotion();
   } else if (gameState.usedEnPassant) {
-    board[gameState.enPassant.row][gameState.enPassant.column].innerHTML = '';
-    board[gameState.enPassant.row][gameState.enPassant.column].isWhite = undefined;
+    clearSquare(gameState.enPassant);
   } else if (gameState.usedCastling) {
     gameState.usedCastling = false;
     if (movement.to.column === 2) {
@@ -307,6 +307,12 @@ function move(movement) {
       })
     }
   }
+}
+
+function clearSquare({ row, column }) {
+  board[row][column].innerHTML = '';
+  board[row][column].isWhite = undefined;
+  board[row][column].classList.remove("whitePiece");
 }
 
 window.onload = init;
