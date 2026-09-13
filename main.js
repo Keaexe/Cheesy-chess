@@ -4,7 +4,6 @@ function init() {
   gameState = {
     toPlay: 0, // 0 = white, 1 = black
     selected: undefined,
-    castlingAvailability: 16, // bits (1111) whiteleft, whiteright, blackleft, blackright
     enPassant: undefined,
     usedEnPassant: false,
     usedCastling: false,
@@ -34,6 +33,7 @@ function createBoard() {
       } else if (i === 0 || i === 7) {
         if (j === 0 || j === 7) {
           board[i][j].innerHTML = '󰡛';
+          board[i][j].castlingAvailable = true;
         } else if (j === 1 || j === 6) {
           board[i][j].innerHTML = '󰡘';
         } else if (j === 2 || j === 5) {
@@ -42,6 +42,7 @@ function createBoard() {
           board[i][j].innerHTML = '󰡚';
         } else if (j === 4) {
           board[i][j].innerHTML = '󰡗';
+          board[i][j].castlingAvailable = true;
         }
       }
 
@@ -64,7 +65,10 @@ function select(row, column){
     if (board[row][column].innerHTML === '') {
       return;
     }
-    if ((board[row][column].isWhite && gameState.toPlay === 1) || ((!board[row][column].isWhite) && gameState.toPlay === 0)) {
+    if (
+      (board[row][column].isWhite && gameState.toPlay === 1) ||
+      ((!board[row][column].isWhite) && gameState.toPlay === 0)
+    ) {
       alert("It's " + (gameState.toPlay === 0 ? "white" : "black") + "'s turn");
       return;
     }
@@ -137,7 +141,10 @@ function rookCase(movement) {
 // checks if a movement can be accomplished with the given delta and if no pieces are in the way
 function checkEmptyPath(movement, delta) {
   let currentDelta = { ...delta };
-  while (movement.from.row + currentDelta.row !== movement.to.row || movement.from.column + currentDelta.column !== movement.to.column) {
+  while (
+    movement.from.row + currentDelta.row !== movement.to.row ||
+    movement.from.column + currentDelta.column !== movement.to.column
+  ) {
     if (movement.from.row + currentDelta.row > 7 || movement.from.row + currentDelta.row < 0 ||
         movement.from.column + currentDelta.column > 7 || movement.from.column + currentDelta.column < 0) {
       return false;
@@ -165,8 +172,7 @@ function queenCase(movement) {
 
 function kingCase(movement) {
   // castling
-  let castlingAvailable = (gameState.toPlay === 0 ? 12 /*1100*/ : 3 /*0011*/);
-  if ((gameState.castlingAvailability & castlingAvailable) !== 0) {
+  if (board[movement.from.row][movement.from.column].castlingAvailable !== undefined) {
     if ((gameState.toPlay === 0 && movement.to.row === 7) || (gameState.toPlay === 1 && movement.to.row === 0)) {
       if (movement.to.column === 2) {
         gameState.usedCastling = true;
@@ -183,7 +189,7 @@ function kingCase(movement) {
     row: movement.to.row - movement.from.row,
     column: movement.to.column - movement.from.column
   }
-  return (delta.row >= -1 && delta.row <= 1 && delta.column <= -1 && delta.column >= 1);
+  return (delta.row >= -1 && delta.row <= 1 && delta.column >= -1 && delta.column <= 1);
 }
 
 function knightCase(movement) {
@@ -191,10 +197,10 @@ function knightCase(movement) {
     row: Math.abs(movement.to.row - movement.from.row),
     column: Math.abs(movement.to.column - movement.from.column)
   }
-  if (absDelta.row === 3) {
+  if (absDelta.row === 2) {
     return absDelta.column === 1;
   }
-  if (absDelta.column === 3) {
+  if (absDelta.column === 2) {
     return absDelta.row === 1;
   }
   return false;
@@ -295,19 +301,28 @@ function move(movement) {
     promotion();
   } else if (gameState.usedEnPassant) {
     clearSquare(gameState.enPassant);
-  } else if (gameState.usedCastling) {
-    gameState.usedCastling = false;
-    if (movement.to.column === 2) {
-      move({
-        from: { row: movement.from.row, column: 0 },
-        to: { row: movement.from.row, column: 3 }
-      });
-    } else {
-      move({
-        from: { row: movement.from.row, column: 7 },
-        to: { row: movement.from.row, column: 5 }
-      });
+  } else if (board[movement.to.row][movement.to.column].innerHTML === '󰡗') {
+    if (board[movement.from.row][movement.from.column].castlingAvailable !== undefined) {
+      board[movement.from.row][movement.from.column].castlingAvailable = undefined;
     }
+    if (gameState.usedCastling) {
+      gameState.usedCastling = false;
+      if (movement.to.column === 2) {
+        move({
+          from: { row: movement.from.row, column: 0 },
+          to: { row: movement.from.row, column: 3 }
+        });
+      } else {
+        move({
+          from: { row: movement.from.row, column: 7 },
+          to: { row: movement.from.row, column: 5 }
+        });
+      }
+    }
+  } else if (board[movement.to.row][movement.to.column].innerHTML === '󰡛') {
+      if (board[movement.from.row][movement.from.column].castlingAvailable !== undefined) {
+        board[movement.from.row][movement.from.column].castlingAvailable = undefined;
+      }
   }
 }
 
