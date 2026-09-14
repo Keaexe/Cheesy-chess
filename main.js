@@ -7,7 +7,9 @@ function init() {
     enPassant: undefined,
     usedEnPassant: false,
     usedCastling: false,
-    promotion: undefined
+    promotion: undefined,
+    whiteKingPosition: { row: 7, column: 4},
+    blackKingPosition: {row: 0, column: 4}
   }
   createBoard();
 }
@@ -91,7 +93,7 @@ function select(row, column){
   }
   unselect();
   if (!move(movement)) {
-    alert("Illegal move (check position)");
+    alert("Illegal move (check)");
     return;
   }
   changeTurn();
@@ -127,6 +129,9 @@ function isLegal(movement) {
       return kingCase(movement);
     case '󰡙':
       return pawnCase(movement);
+    default:
+      alert("Error");
+      return false;
   }
 }
 
@@ -238,7 +243,7 @@ function pawnCase(movement) {
     return true
   }
   // normal moves
-  if (delta.row !== 1 && delta.row !== -1) {
+  if (delta.row !== (gameState.toPlay === 0 ? -1 : 1)) {
     return false;
   }
   if (delta.column > 1 || delta.column < -1) {
@@ -346,6 +351,12 @@ function simpleMove(movement) {
   clearSquare(movement.from);
 }
 
+function clearSquare({ row, column }) {
+  board[row][column].innerHTML = '';
+  board[row][column].isWhite = undefined;
+  board[row][column].classList.remove("whitePiece");
+}
+
 function savePiece({ row, column }) {
   return {
     innerHTML: board[row][column].innerHTML,
@@ -356,19 +367,29 @@ function savePiece({ row, column }) {
 function resurrectPiece(deadPiece, {row, column}) {
   board[row][column].innerHTML = deadPiece.innerHTML;
   board[row][column].isWhite = deadPiece.isWhite;
-  if (board[movement.from.row][movement.from.column].isWhite) {
-    board[movement.to.row][movement.to.column].classList.add("whitePiece");
+  if (deadPiece.isWhite) {
+    board[row][column].classList.add("whitePiece");
   }
 }
 
 function isCheckFree() {
+  for (let i = 0; i < 8; i++){
+    for (let j = 0; j < 8; j++){
+        if (endangersTheKing(i, j)) {
+          console.log("Endangered by " + i + ", " + j);
+          return false;
+        }
+    }
+  }
   return true;
 }
 
-function clearSquare({ row, column }) {
-  board[row][column].innerHTML = '';
-  board[row][column].isWhite = undefined;
-  board[row][column].classList.remove("whitePiece");
+function endangersTheKing(row, column) {
+  return board[row][column].isWhite === (gameState.toPlay === 1) &&
+    isLegal({
+      from: { row: row, column: column },
+      to: (gameState.toPlay === 0 ? gameState.blackKingPosition : gameState.whiteKingPosition)
+    });
 }
 
 window.onload = init;
