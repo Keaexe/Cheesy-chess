@@ -89,9 +89,11 @@ function select(row, column){
     unselect();
     return;
   }
-  move(movement);
-  board[gameState.selected.row][gameState.selected.column].classList.remove("selected");
-  gameState.selected = undefined;
+  unselect();
+  if (!move(movement)) {
+    alert("Illegal move (check position)");
+    return;
+  }
   changeTurn();
 }
 
@@ -287,19 +289,17 @@ function promotion() {
 }
 
 function move(movement) {
-  board[movement.to.row][movement.to.column].innerHTML = board[movement.from.row][movement.from.column].innerHTML;
-  if (board[movement.from.row][movement.from.column].isWhite) {
-    board[movement.to.row][movement.to.column].classList.add("whitePiece");
-  } else {
-    board[movement.to.row][movement.to.column].classList.remove("whitePiece");
+  let deadPiece = undefined;
+  if (board[movement.to.row][movement.to.column].innerHTML !== '') {
+    deadPiece = savePiece(movement.to);
   }
-  board[movement.to.row][movement.to.column].isWhite = board[movement.from.row][movement.from.column].isWhite;
-  clearSquare(movement.from);
+  simpleMove(movement);
 
   // special cases
   if (gameState.promotion !== undefined) {
     promotion();
   } else if (gameState.usedEnPassant) {
+    deadPiece = savePiece(gameState.enPassant);
     clearSquare(gameState.enPassant);
   } else if (board[movement.to.row][movement.to.column].innerHTML === '󰡗') {
     if (board[movement.from.row][movement.from.column].castlingAvailable !== undefined) {
@@ -324,6 +324,45 @@ function move(movement) {
         board[movement.from.row][movement.from.column].castlingAvailable = undefined;
       }
   }
+  // check
+  if (!isCheckFree()) {
+    simpleMove({ from: movement.to, to: movement.from });
+    if (deadPiece !== undefined) {
+      resurrectPiece(deadPiece, movement.to);
+    }
+    return false;
+  }
+  return true;
+}
+
+function simpleMove(movement) {
+  board[movement.to.row][movement.to.column].innerHTML = board[movement.from.row][movement.from.column].innerHTML;
+  board[movement.to.row][movement.to.column].isWhite = board[movement.from.row][movement.from.column].isWhite;
+  if (board[movement.from.row][movement.from.column].isWhite) {
+    board[movement.to.row][movement.to.column].classList.add("whitePiece");
+  } else {
+    board[movement.to.row][movement.to.column].classList.remove("whitePiece");
+  }
+  clearSquare(movement.from);
+}
+
+function savePiece({ row, column }) {
+  return {
+    innerHTML: board[row][column].innerHTML,
+    isWhite: board[row][column].isWhite
+  }
+}
+
+function resurrectPiece(deadPiece, {row, column}) {
+  board[row][column].innerHTML = deadPiece.innerHTML;
+  board[row][column].isWhite = deadPiece.isWhite;
+  if (board[movement.from.row][movement.from.column].isWhite) {
+    board[movement.to.row][movement.to.column].classList.add("whitePiece");
+  }
+}
+
+function isCheckFree() {
+  return true;
 }
 
 function clearSquare({ row, column }) {
