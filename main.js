@@ -294,6 +294,7 @@ function move(movement) {
     deadPiece = savePiece(movement.to);
   }
   simpleMove(movement);
+
   // special cases
   if (gameState.promotion !== undefined) {
     promotion();
@@ -323,6 +324,7 @@ function move(movement) {
         board[movement.from.row][movement.from.column].castlingAvailable = undefined;
       }
   }
+  // check
   if (!isCheckFree()) {
     simpleMove({ from: movement.to, to: movement.from });
     if (deadPiece !== undefined) {
