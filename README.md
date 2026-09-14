@@ -9,6 +9,7 @@ This is a web-based chess game to play against your friends in local.
 ## Features :
 + Beautiful interface
 + Dark mode
++ Mobile friendly
 + Highlight last move
 
 ## Installation & Usage
