@@ -307,8 +307,11 @@ function move(movement) {
     deadPiece = savePiece(gameState.enPassant);
     clearSquare(gameState.enPassant);
   } else if (board[movement.to.row][movement.to.column].innerHTML === '󰡗') {
-    if (board[movement.from.row][movement.from.column].castlingAvailable !== undefined) {
-      board[movement.from.row][movement.from.column].castlingAvailable = undefined;
+    board[movement.from.row][movement.from.column].castlingAvailable = undefined;
+    if (gameState.toPlay === 0) {
+      gameState.whiteKingPosition = movement.to;
+    } else {
+      gameState.blackKingPosition = movement.to;
     }
     if (gameState.usedCastling) {
       gameState.usedCastling = false;
@@ -332,6 +335,15 @@ function move(movement) {
   // check
   if (!isCheckFree()) {
     simpleMove({ from: movement.to, to: movement.from });
+    if (board[movement.from.row][movement.from.column].innerHTML === '󰡗'){
+      // reverting king position in gameState
+      if (gameState.toPlay === 0) {
+        gameState.whiteKingPosition = movement.from;
+      } else {
+        gameState.blackKingPosition = movement.from;
+      }
+    }
+
     if (deadPiece !== undefined) {
       resurrectPiece(deadPiece, movement.to);
     }
@@ -385,11 +397,14 @@ function isCheckFree() {
 }
 
 function endangersTheKing(row, column) {
-  return board[row][column].isWhite === (gameState.toPlay === 1) &&
+  gameState.toPlay = gameState.toPlay * -1 + 1;
+  let isInDanger = board[row][column].isWhite === (gameState.toPlay === 0) &&
     isLegal({
       from: { row: row, column: column },
-      to: (gameState.toPlay === 0 ? gameState.blackKingPosition : gameState.whiteKingPosition)
+      to: (gameState.toPlay === 1 ? gameState.whiteKingPosition : gameState.blackKingPosition)
     });
+  gameState.toPlay = gameState.toPlay * -1 + 1;
+  return isInDanger;
 }
 
 window.onload = init;
