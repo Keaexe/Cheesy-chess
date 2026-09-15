@@ -62,6 +62,27 @@ function toggleTheme() {
   document.body.classList.toggle("dark-theme");
 }
 
+function surrender() {
+  let message = ("Are you sure you want to surrender ?\n(" + (gameState.toPlay === 0 ? "black" : "white") + " will win)");
+  if (confirm(message) === true) {
+    changeTurn();
+    win(gameState.toPlay);
+  }
+}
+
+function win(winner) {
+  deleteEventListener();
+  turnIndicator.innerHTML = (winner === 0 ? "White ⬜" : "Black ⬛") + " won the game, congratulations";
+}
+
+function deleteEventListener() {
+  for (let i = 0; i < 8; i++){
+    for (let j = 0; j < 8; j++){
+      board[i][j].removeEventListener("click", () => { select(i, j); });
+    }
+  }
+}
+
 function select(row, column){
   if (gameState.selected === undefined) {
     if (board[row][column].innerHTML === '') {
@@ -97,11 +118,11 @@ function select(row, column){
     return;
   }
   changeTurn();
+  turnIndicator.innerHTML = gameState.toPlay === 0 ? "White's turn ⬜" : "Black's turn ⬛";
 }
 
 function changeTurn() {
   gameState.toPlay = gameState.toPlay * -1 + 1;
-  turnIndicator.innerHTML = gameState.toPlay === 0 ? "White's turn ⬜" : "Black's turn ⬛";
 }
 
 function unselect() {
@@ -397,13 +418,14 @@ function isCheckFree() {
 }
 
 function endangersTheKing(row, column) {
-  gameState.toPlay = gameState.toPlay * -1 + 1;
+  changeTurn();
+  // gameState.toPlay is inverted to test legality
   let isInDanger = board[row][column].isWhite === (gameState.toPlay === 0) &&
     isLegal({
       from: { row: row, column: column },
       to: (gameState.toPlay === 1 ? gameState.whiteKingPosition : gameState.blackKingPosition)
     });
-  gameState.toPlay = gameState.toPlay * -1 + 1;
+  changeTurn();
   return isInDanger;
 }
 
