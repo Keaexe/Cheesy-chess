@@ -168,6 +168,10 @@ td:active {
   filter: brightness(0.95);
 }
 
+table.grey td {
+    filter: brightness(0.75);
+}
+
 /* Active & Selection State */
 td.selected {
   background-color: var(--highlight-selection) !important;
@@ -205,13 +209,13 @@ td.selected {
   transform: translateY(-2px);
 }
 
-#draw {
+.normalButton {
   background-color: var(--panel-bg);
   color: var(--text-primary);
   border: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
-#draw:hover {
+.normalButton:hover {
   transform: translateY(-2px);
   background-color: var(--square-light);
 }

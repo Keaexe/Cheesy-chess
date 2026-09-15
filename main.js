@@ -1,4 +1,5 @@
 function init() {
+  boardElement = document.getElementById("board");
   turnIndicator = document.getElementById("turnIndicator");
   board = [];
   gameState = {
@@ -15,7 +16,6 @@ function init() {
 }
 
 function createBoard() {
-  let boardElement = document.getElementById("board");
   for (let i = 0; i < 8; i++) {
     let tr = document.createElement("tr");
     boardElement.appendChild(tr);
@@ -62,6 +62,40 @@ function toggleTheme() {
   document.body.classList.toggle("dark-theme");
 }
 
+function surrender() {
+  const message = ("Are you sure you want to surrender ?\n(" + (gameState.toPlay === 0 ? "black" : "white") + " will win)");
+  if (confirm(message) === true) {
+    changeTurn();
+    win(gameState.toPlay);
+  }
+}
+
+function win(winner) {
+  endGame();
+  turnIndicator.innerHTML = (winner === 0 ? "White ⬜" : "Black ⬛") + " won the game, congratulations !";
+}
+
+function proposeDraw() {
+  const message = ((gameState.toPlay === 0 ? "White ⬜" : "Black ⬛") + " is proposing a draw. Do you accept ?");
+  if (confirm(message) === true) {
+    endGame();
+    turnIndicator.innerHTML = "Draw !"
+  }
+}
+
+function endGame() {
+  for (let i = 0; i < 8; i++){
+    for (let j = 0; j < 8; j++){
+      board[i][j].removeEventListener("click", () => { select(i, j); });
+    }
+  }
+  boardElement.classList.add("grey");
+  const controls = document.getElementById("controls");
+  controls.removeChild(controls.firstElementChild);
+  controls.firstElementChild.innerHTML = "Restart game";
+  controls.firstElementChild.onclick = () => { location.reload(); };
+}
+
 function select(row, column){
   if (gameState.selected === undefined) {
     if (board[row][column].innerHTML === '') {
@@ -97,11 +131,11 @@ function select(row, column){
     return;
   }
   changeTurn();
+  turnIndicator.innerHTML = gameState.toPlay === 0 ? "White's turn ⬜" : "Black's turn ⬛";
 }
 
 function changeTurn() {
   gameState.toPlay = gameState.toPlay * -1 + 1;
-  turnIndicator.innerHTML = gameState.toPlay === 0 ? "White's turn ⬜" : "Black's turn ⬛";
 }
 
 function unselect() {
@@ -307,8 +341,11 @@ function move(movement) {
     deadPiece = savePiece(gameState.enPassant);
     clearSquare(gameState.enPassant);
   } else if (board[movement.to.row][movement.to.column].innerHTML === '󰡗') {
-    if (board[movement.from.row][movement.from.column].castlingAvailable !== undefined) {
-      board[movement.from.row][movement.from.column].castlingAvailable = undefined;
+    board[movement.from.row][movement.from.column].castlingAvailable = undefined;
+    if (gameState.toPlay === 0) {
+      gameState.whiteKingPosition = movement.to;
+    } else {
+      gameState.blackKingPosition = movement.to;
     }
     if (gameState.usedCastling) {
       gameState.usedCastling = false;
@@ -332,6 +369,15 @@ function move(movement) {
   // check
   if (!isCheckFree()) {
     simpleMove({ from: movement.to, to: movement.from });
+    if (board[movement.from.row][movement.from.column].innerHTML === '󰡗'){
+      // reverting king position in gameState
+      if (gameState.toPlay === 0) {
+        gameState.whiteKingPosition = movement.from;
+      } else {
+        gameState.blackKingPosition = movement.from;
+      }
+    }
+
     if (deadPiece !== undefined) {
       resurrectPiece(deadPiece, movement.to);
     }
@@ -385,11 +431,15 @@ function isCheckFree() {
 }
 
 function endangersTheKing(row, column) {
-  return board[row][column].isWhite === (gameState.toPlay === 1) &&
+  changeTurn();
+  // gameState.toPlay is inverted to test legality
+  let isInDanger = board[row][column].isWhite === (gameState.toPlay === 0) &&
     isLegal({
       from: { row: row, column: column },
-      to: (gameState.toPlay === 0 ? gameState.blackKingPosition : gameState.whiteKingPosition)
+      to: (gameState.toPlay === 1 ? gameState.whiteKingPosition : gameState.blackKingPosition)
     });
+  changeTurn();
+  return isInDanger;
 }
 
 window.onload = init;
