@@ -19,11 +19,8 @@ This is a web-based chess game to play against your friends in local.
 
 Since this is a static web application, no build process is required:
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Keaexe/Cheesy-chess.git
-   cd Cheesy-chess
-   ```
+1. **Download the [latest release](https://github.com/Keaexe/Cheesy-chess/releases/latest)**  
+   
 2. **Use in your browser**
    + By click-dragging
    + By double clicking
