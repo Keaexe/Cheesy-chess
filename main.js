@@ -1,4 +1,5 @@
 function init() {
+  boardElement = document.getElementById("board");
   turnIndicator = document.getElementById("turnIndicator");
   board = [];
   gameState = {
@@ -15,7 +16,6 @@ function init() {
 }
 
 function createBoard() {
-  let boardElement = document.getElementById("board");
   for (let i = 0; i < 8; i++) {
     let tr = document.createElement("tr");
     boardElement.appendChild(tr);
@@ -63,7 +63,7 @@ function toggleTheme() {
 }
 
 function surrender() {
-  let message = ("Are you sure you want to surrender ?\n(" + (gameState.toPlay === 0 ? "black" : "white") + " will win)");
+  const message = ("Are you sure you want to surrender ?\n(" + (gameState.toPlay === 0 ? "black" : "white") + " will win)");
   if (confirm(message) === true) {
     changeTurn();
     win(gameState.toPlay);
@@ -71,16 +71,29 @@ function surrender() {
 }
 
 function win(winner) {
-  deleteEventListener();
-  turnIndicator.innerHTML = (winner === 0 ? "White ⬜" : "Black ⬛") + " won the game, congratulations";
+  endGame();
+  turnIndicator.innerHTML = (winner === 0 ? "White ⬜" : "Black ⬛") + " won the game, congratulations !";
 }
 
-function deleteEventListener() {
+function proposeDraw() {
+  const message = ((gameState.toPlay === 0 ? "White ⬜" : "Black ⬛") + " is proposing a draw. Do you accept ?");
+  if (confirm(message) === true) {
+    endGame();
+    turnIndicator.innerHTML = "Draw !"
+  }
+}
+
+function endGame() {
   for (let i = 0; i < 8; i++){
     for (let j = 0; j < 8; j++){
       board[i][j].removeEventListener("click", () => { select(i, j); });
     }
   }
+  boardElement.classList.add("grey");
+  const controls = document.getElementById("controls");
+  controls.removeChild(controls.firstElementChild);
+  controls.firstElementChild.innerHTML = "Restart game";
+  controls.firstElementChild.onclick = () => { location.reload(); };
 }
 
 function select(row, column){
