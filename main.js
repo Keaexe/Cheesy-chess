@@ -78,10 +78,13 @@ function win(winner) {
 function proposeDraw() {
   const message = ((gameState.toPlay === 0 ? "White ⬜" : "Black ⬛") + " is proposing a draw. Do you accept ?");
   if (confirm(message) === true) {
-    endGame();
-    turnIndicator.innerHTML = "Draw !"
+    draw();
   }
 }
+function draw() {
+  endGame();
+  turnIndicator.innerHTML = "Draw !"
+ }
 
 function endGame() {
   for (let i = 0; i < 8; i++){
@@ -132,6 +135,14 @@ function select(row, column){
   }
   changeTurn();
   turnIndicator.innerHTML = gameState.toPlay === 0 ? "White's turn ⬜" : "Black's turn ⬛";
+  if (!canMove()) {
+    if (isCheckFree()) {
+      draw();
+    } else {
+      changeTurn();
+      win(gameState.toPlay);
+    }
+  }
 }
 
 function changeTurn() {
@@ -440,6 +451,10 @@ function endangersTheKing(row, column) {
     });
   changeTurn();
   return isInDanger;
+}
+
+function canMove() {
+  return true;
 }
 
 window.onload = init;
