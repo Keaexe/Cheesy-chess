@@ -23,7 +23,7 @@ function createBoard() {
     for (let j = 0; j < 8; j++) {
       let td = document.createElement("td")
       board[i][j] = tr.appendChild(td)
-      board[i][j].addEventListener("click", () => { select(i, j); });
+      board[i][j].setAttribute("onclick", "select(" + i + ", " + j + ")");
       if ((i % 2 === 0 && j % 2 === 0) || (i % 2 !== 0 && j % 2 !== 0)) {
         board[i][j].classList.add("whiteSquare");
       } else {
@@ -86,7 +86,7 @@ function proposeDraw() {
 function endGame() {
   for (let i = 0; i < 8; i++){
     for (let j = 0; j < 8; j++){
-      board[i][j].removeEventListener("click", () => { select(i, j); });
+      board[i][j].removeAttribute("onclick");
     }
   }
   boardElement.classList.add("grey");
