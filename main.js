@@ -268,7 +268,7 @@ function pawnCase(movement) {
     if (delta.row !== (gameState.toPlay === 0 ? -2 : 2)) {
       return false;
     }
-    if (board[movement.row][board.movement.column].innerHTML !== '') {
+    if (board[movement.to.row][movement.to.column].innerHTML !== '') {
       return false;
     }
     // movement is legal, now looking for en passant
