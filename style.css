@@ -169,7 +169,7 @@ td:active {
 }
 
 table.grey td {
-    filter: brightness(0.75);
+    filter: brightness(0.70);
 }
 
 /* Active & Selection State */
