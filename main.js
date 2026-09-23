@@ -7,7 +7,8 @@ function init() {
     selected: undefined,
     enPassant: undefined,
     whiteKingPosition: { row: 7, column: 4},
-    blackKingPosition: {row: 0, column: 4}
+    blackKingPosition: { row: 0, column: 4 },
+    lastMove: undefined
   }
   createBoard();
 }
@@ -362,6 +363,7 @@ function play(movement, caveats) {
     if (board[movement.from.row][movement.from.column].castlingAvailable !== undefined) {
       board[movement.from.row][movement.from.column].castlingAvailable = undefined;        }
   }
+  gameState.lastMove = movement;
 }
 
 function move(movement, caveats = {}) {
@@ -497,6 +499,19 @@ function canMove() {
     }
   }
   return false;
+}
+
+function highlightLastMove() {
+  if (gameState.lastMove === undefined) {
+    alert("No last move");
+    return;
+  }
+  board[gameState.lastMove.from.row][gameState.lastMove.from.column].classList.add("highlight");
+  board[gameState.lastMove.to.row][gameState.lastMove.to.column].classList.add("highlight");
+  setTimeout(() => {
+    board[gameState.lastMove.from.row][gameState.lastMove.from.column].classList.remove("highlight");
+    board[gameState.lastMove.to.row][gameState.lastMove.to.column].classList.remove("highlight");
+  }, 800)
 }
 
 window.onload = init;
