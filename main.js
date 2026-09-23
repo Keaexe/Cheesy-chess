@@ -143,7 +143,10 @@ function select(row, column){
       win(gameState.toPlay);
     }
   }
-  // if check then visual warning
+  if (!isCheckFree()) {
+    document.body.classList.add("warning");
+    setTimeout(() => { document.body.classList.remove("warning") }, 750);
+  }
 }
 
 function changeTurn() {

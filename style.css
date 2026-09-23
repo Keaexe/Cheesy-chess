@@ -230,7 +230,6 @@ button {
   right: 1rem;
 }
 
-/* Highlight Class for Td Elements (different from selected) */
 td.highlight {
   background-color: #a8d5ba !important;
   box-shadow: inset 0 0 0 2px rgba(76, 175, 80, 0.6);
@@ -238,4 +237,13 @@ td.highlight {
 
 body.dark-theme .highlight {
   background-color: #5c7a5c !important;
+}
+
+.warning {
+  background-color: #ffcdd2;
+  box-shadow: inset 0 0 0 3px rgba(244, 67, 54, 0.6);
+}
+
+body.dark-theme .warning {
+  background-color: #4a2e2e;
 }
