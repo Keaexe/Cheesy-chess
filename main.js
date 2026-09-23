@@ -143,6 +143,7 @@ function select(row, column){
       win(gameState.toPlay);
     }
   }
+  // if check then visual warning
 }
 
 function changeTurn() {
@@ -154,37 +155,13 @@ function unselect() {
   gameState.selected = undefined;
 }
 
+// Checks if movement is legal (with check)
 function isLegal(movement) {
-  gameState.usedEnPassant = false;
-  gameState.usedCastling = false;
-  gameState.promotion = undefined;
   if (board[movement.from.row][movement.from.column].isWhite === board[movement.to.row][movement.to.column].isWhite) {
     return false;
   }
-  let canReach;
-  switch (board[movement.from.row][movement.from.column].innerHTML) {
-    case '󰡛':
-      canReach = rookCase(movement);
-      break;
-    case '󰡘':
-      canReach = knightCase(movement);
-      break;
-    case '󰡜':
-      canReach = bishopCase(movement);
-    case '󰡚':
-      canReach = queenCase(movement);
-      break;
-    case '󰡗':
-      canReach = kingCase(movement);
-      break;
-    case '󰡙':
-      canReach = pawnCase(movement);
-      break;
-    default:
-      alert("Error");
-      return false;
-  }
-  if (!canReach) {
+
+  if (!canReach(movement)) {
     return false;
   }
 
@@ -192,6 +169,30 @@ function isLegal(movement) {
   let checkFree = isCheckFree();
   unMove(movement, deadPiece);
   return checkFree;
+}
+
+// Checks if the piece can reach its destination without checking for check
+function canReach(movement) {
+  gameState.usedEnPassant = false;
+  gameState.usedCastling = false;
+  gameState.promotion = undefined;
+  switch (board[movement.from.row][movement.from.column].innerHTML) {
+    case '󰡛':
+      return rookCase(movement);
+    case '󰡘':
+      return knightCase(movement);
+    case '󰡜':
+      return bishopCase(movement);
+    case '󰡚':
+      return queenCase(movement);
+    case '󰡗':
+      return kingCase(movement);
+    case '󰡙':
+      return pawnCase(movement);
+    default:
+      alert("Error");
+      return false;
+  }
 }
 
 function rookCase(movement) {
@@ -359,6 +360,7 @@ function play(movement) {
   move(movement)
   if (gameState.promotion !== undefined) {
     promotion();
+    gameState.promotion = undefined;
   } else if (board[movement.to.row][movement.to.column].innerHTML === '󰡗') {
     board[movement.from.row][movement.from.column].castlingAvailable = undefined;
     if (gameState.usedCastling) {
@@ -387,6 +389,7 @@ function move(movement) {
       gameState.blackKingPosition = movement.to;
     }
     if (gameState.usedCastling) {
+      // move rook
       if (movement.to.column === 2) {
         move({
           from: { row: movement.from.row, column: 0 },
@@ -415,6 +418,7 @@ function unMove(movement, deadPiece) {
     } else {
       gameState.blackKingPosition = movement.from;
     }
+    // wrong if
     if (gameState.usedCastling) {
       if (movement.to.column === 2) {
         move({
@@ -479,7 +483,7 @@ function endangersTheKing(row, column) {
   changeTurn();
   // gameState.toPlay is inverted to test legality
   let isInDanger = board[row][column].isWhite === (gameState.toPlay === 0) &&
-    isLegal({
+    canReach({
       from: { row: row, column: column },
       to: (gameState.toPlay === 1 ? gameState.whiteKingPosition : gameState.blackKingPosition)
     });
@@ -488,7 +492,20 @@ function endangersTheKing(row, column) {
 }
 
 function canMove() {
-  return true;
+  for (let i = 0; i < 8; i++){
+    for (let j = 0; j < 8; j++){
+      if (board[i][j].isWhite === (gameState.toPlay === 0)) {
+        for (let row = 0; row < 8; row++){
+          for (let column = 0; column < 8; column++){
+            if (isLegal({ from: { row: i, column: j }, to: { row: row, column: column } })) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+  }
+  return false;
 }
 
 window.onload = init;
