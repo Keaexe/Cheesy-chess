@@ -11,8 +11,8 @@ This is a web-based chess game to play against your friends in local.
 + Beautiful interface
 + Dark mode
 + Mobile friendly
++ Automatic checkmate
 + Coming soon :
-  + Automatic checkmate
   + Highlight last move
 
 ## Installation & Usage
