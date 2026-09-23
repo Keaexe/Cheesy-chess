@@ -398,7 +398,7 @@ function move(movement, caveats = {}) {
   return deadPiece;
 }
 
-function unMove(movement, deadPiece, caveats) {
+function unMove(movement, deadPiece, caveats = {}) {
   simpleMove({ from: movement.to, to: movement.from });
   if (deadPiece !== undefined) {
     resurrectPiece(deadPiece, movement.to);
