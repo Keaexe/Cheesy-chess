@@ -8,7 +8,8 @@ function init() {
     enPassant: undefined,
     whiteKingPosition: { row: 7, column: 4},
     blackKingPosition: { row: 0, column: 4 },
-    lastMove: undefined
+    lastMove: undefined,
+    caveats: {}
   }
   createBoard();
 }
@@ -110,6 +111,7 @@ function select(row, column){
       return;
     }
     board[row][column].classList.add("selected");
+    highlightPossibleMoves(row, column);
     gameState.selected = { row: row, column: column };
     return;
   }
@@ -122,14 +124,13 @@ function select(row, column){
     to: { row, column }
   };
 
-  let caveats = {};
-  if (!isLegal(movement, caveats)) {
+  if (!board[row][column].classList.contains("possibleMove")) {
     alert("Illegal move");
     unselect();
     return;
   }
 
-  play(movement, caveats);
+  play(movement, gameState.caveats);
   unselect();
 
   changeTurn();
@@ -156,6 +157,21 @@ function changeTurn() {
 function unselect() {
   board[gameState.selected.row][gameState.selected.column].classList.remove("selected");
   gameState.selected = undefined;
+  for (let i = 0; i < 8; i++){
+    for (let j = 0; j < 8; j++){
+      board[i][j].classList.remove("possibleMove");
+    }
+  }
+}
+
+function highlightPossibleMoves(row, column) {
+  for (let i = 0; i < 8; i++){
+    for (let j = 0; j < 8; j++){
+      if (isLegal({ from: { row: row, column: column }, to: { row: i, column: j } }, gameState.caveats)) {
+        board[i][j].classList.add("possibleMove");
+      }
+    }
+  }
 }
 
 // Checks if movement is legal (with check)
@@ -191,7 +207,7 @@ function canReach(movement, caveats = undefined) {
       return pawnCase(movement, caveats);
     default:
       alert("Error");
-      return {reachable: false};
+      return false;
   }
 }
 

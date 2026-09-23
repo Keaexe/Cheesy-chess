@@ -230,12 +230,12 @@ button {
   right: 1rem;
 }
 
-td.highlight {
+td.possibleMove {
   background-color: #a8d5ba !important;
   box-shadow: inset 0 0 0 2px rgba(76, 175, 80, 0.6);
 }
 
-body.dark-theme .highlight {
+body.dark-theme .possibleMove {
   background-color: #5c7a5c !important;
 }
 
