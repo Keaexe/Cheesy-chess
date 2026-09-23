@@ -241,7 +241,7 @@ function kingCase(movement, caveats) {
         if (caveats !== undefined) {
           caveats.usedCastling = true;
         }
-        return checkEmptyPath(movement, { row: 0, column: (movement.to.column === 2 ? -1 : 1) });
+        return (checkEmptyPath(movement, { row: 0, column: (movement.to.column === 2 ? 0 : 7) }) );
       }
     }
   }
