@@ -187,7 +187,7 @@ td.selected {
   justify-content: center;
 }
 
-#controls button {
+button {
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 700;
@@ -222,4 +222,20 @@ td.selected {
 
 #controls button:active {
   transform: translateY(0);
+}
+
+#highlightButton {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+}
+
+/* Highlight Class for Td Elements (different from selected) */
+td.highlight {
+  background-color: #a8d5ba !important;
+  box-shadow: inset 0 0 0 2px rgba(76, 175, 80, 0.6);
+}
+
+body.dark-theme .highlight {
+  background-color: #5c7a5c !important;
 }
