@@ -13,6 +13,7 @@ This is a web-based chess game to play against your friends in local.
 + Mobile friendly
 + Automatic checkmate
 + Highlight last move
++ Highlight possible plays
 
 ## Installation & Usage
 
@@ -25,3 +26,4 @@ Since this is a static web application, no build process is required:
    + By double clicking
 
 You can host this as well but I won't cover the installations steps
+There is also a lighter release, limited in features
