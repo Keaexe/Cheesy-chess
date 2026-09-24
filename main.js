@@ -217,7 +217,10 @@ function kingCase(movement) {
     if ((gameState.toPlay === 0 && movement.to.row === 7) || (gameState.toPlay === 1 && movement.to.row === 0)) {
       if (movement.to.column === 2 || movement.to.column === 6) {
         gameState.usedCastling = true;
-        return (checkEmptyPath(movement, { row: 0, column: (movement.to.column === 2 ? 0 : 7) }) );
+        if (movement.to.column === 2) {
+          return (checkEmptyPath({ from: movement.from, to: { row: movement.to.row, column: 0 } }, {row: 0, column: -1}) );
+        }
+        return (checkEmptyPath({ from: movement.from, to: { row: movement.to.row, column: 7 } }, {row: 0, column: 1}) );
       }
     }
   }
