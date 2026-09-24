@@ -8,8 +8,7 @@ function init() {
     enPassant: undefined,
     whiteKingPosition: { row: 7, column: 4},
     blackKingPosition: { row: 0, column: 4 },
-    lastMove: undefined,
-    caveats: {}
+    lastMove: undefined
   }
   createBoard();
 }
@@ -23,6 +22,7 @@ function createBoard() {
       let td = document.createElement("td")
       board[i][j] = tr.appendChild(td)
       board[i][j].setAttribute("onclick", "select(" + i + ", " + j + ")");
+      board[i][j].caveats = {};
       if ((i % 2 === 0 && j % 2 === 0) || (i % 2 !== 0 && j % 2 !== 0)) {
         board[i][j].classList.add("whiteSquare");
       } else {
@@ -130,7 +130,7 @@ function select(row, column){
     return;
   }
 
-  play(movement, gameState.caveats);
+  play(movement, board[row][column].caveats);
   unselect();
 
   changeTurn();
@@ -160,6 +160,7 @@ function unselect() {
   for (let i = 0; i < 8; i++){
     for (let j = 0; j < 8; j++){
       board[i][j].classList.remove("possibleMove");
+      board[i][j].caveats = {};
     }
   }
 }
@@ -167,7 +168,7 @@ function unselect() {
 function highlightPossibleMoves(row, column) {
   for (let i = 0; i < 8; i++){
     for (let j = 0; j < 8; j++){
-      if (isLegal({ from: { row: row, column: column }, to: { row: i, column: j } }, gameState.caveats)) {
+      if (isLegal({ from: { row: row, column: column }, to: { row: i, column: j } }, board[i][j].caveats)) {
         board[i][j].classList.add("possibleMove");
       }
     }
@@ -261,7 +262,10 @@ function kingCase(movement, caveats) {
         if (caveats !== undefined) {
           caveats.usedCastling = true;
         }
-        return (checkEmptyPath(movement, { row: 0, column: (movement.to.column === 2 ? 0 : 7) }) );
+        if (movement.to.column === 2) {
+          return (checkEmptyPath({ from: movement.from, to: { row: movement.to.row, column: 0 } }, {row: 0, column: -1}) );
+        }
+        return (checkEmptyPath({ from: movement.from, to: { row: movement.to.row, column: 7 } }, {row: 0, column: 1}) );
       }
     }
   }
@@ -422,7 +426,11 @@ function move(movement, caveats = {}) {
 function unMove(movement, deadPiece, caveats = {}) {
   simpleMove({ from: movement.to, to: movement.from });
   if (deadPiece !== undefined) {
-    resurrectPiece(deadPiece, movement.to);
+    if (caveats.usedEnPassant !== undefined) {
+      resurrectPiece(deadPiece, {row: movement.from.row, column: movement.to.column})
+    } else {
+      resurrectPiece(deadPiece, movement.to);
+    }
   }
   if (board[movement.from.row][movement.from.column].innerHTML === '󰡗'){
     // reverting king position in gameState
