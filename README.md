@@ -25,5 +25,6 @@ Since this is a static web application, no build process is required:
    + By click-dragging
    + By double clicking
 
-You can host this as well but I won't cover the installations steps   
-There is also a lighter release, limited in features
+There is also a lighter release, limited in features   
+
+The game is available here : https://keaexe-cheesy-chess.netlify.app/   
