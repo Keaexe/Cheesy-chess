@@ -85,6 +85,14 @@ function draw() {
   turnIndicator.innerHTML = "Draw !"
  }
 
+function restart() {
+  for (let i = 0; i < 8; i++){
+    boardElement.removeChild(boardElement.firstElementChild);
+  }
+  createBoard();
+  boardElement.classList.remove("grey");
+}
+
 function endGame() {
   for (let i = 0; i < 8; i++){
     for (let j = 0; j < 8; j++){
@@ -95,7 +103,7 @@ function endGame() {
   const controls = document.getElementById("controls");
   controls.removeChild(controls.firstElementChild);
   controls.firstElementChild.innerHTML = "Restart game";
-  controls.firstElementChild.onclick = () => { location.reload(); };
+  controls.firstElementChild.onclick = restart;
 }
 
 function select(row, column){
